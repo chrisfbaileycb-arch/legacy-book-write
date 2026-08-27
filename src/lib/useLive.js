@@ -1,22 +1,35 @@
-/**
- * Whacka client SDK — useLive (stub)
- *
- * The implementation runs on the Whacka platform and is provided to your app at
- * runtime; it is intentionally NOT part of this export. This stub only keeps
- * your imports resolving and documents which Whacka APIs your code uses. Your
- * own code (components, pages, hooks) is the real, complete export. See README.
- */
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { db } from './db';
 
-const __wk = (path) =>
-  new Proxy(function () {}, {
-    get: (_t, prop) =>
-      typeof prop === 'symbol' || prop === 'then' ? undefined : __wk(path + '.' + prop),
-    apply: () => {
-      throw new Error(
-        '`' + path + '` runs on the Whacka platform and is not available in exported code.'
-      );
-    },
-  });
+export function useLive(table, options = {}) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-export const useLiveShared = __wk('useLiveShared');
-export const useLive = __wk('useLive');
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
+
+  const fetchData = useCallback(async () => {
+    try {
+      const opts = optionsRef.current || {};
+      const rows = await db.select(table, opts.filters, opts);
+      setData(rows);
+      setError(null);
+    } catch (err) {
+      console.error(`Error in useLive for ${table}:`, err);
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [table]);
+
+  useEffect(() => {
+    fetchData();
+    const unsub = db.subscribe(table, fetchData);
+    return () => unsub();
+  }, [table, fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+}
+
+export const useLiveShared = useLive;

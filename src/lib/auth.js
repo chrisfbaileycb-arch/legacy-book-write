@@ -1,22 +1,63 @@
 /**
- * Whacka client SDK — auth (stub)
- *
- * The implementation runs on the Whacka platform and is provided to your app at
- * runtime; it is intentionally NOT part of this export. This stub only keeps
- * your imports resolving and documents which Whacka APIs your code uses. Your
- * own code (components, pages, hooks) is the real, complete export. See README.
+ * Client authentication provider with local persistence.
  */
 
-const __wk = (path) =>
-  new Proxy(function () {}, {
-    get: (_t, prop) =>
-      typeof prop === 'symbol' || prop === 'then' ? undefined : __wk(path + '.' + prop),
-    apply: () => {
-      throw new Error(
-        '`' + path + '` runs on the Whacka platform and is not available in exported code.'
-      );
-    },
-  });
+const STORAGE_KEY = 'uspk_auth_user';
 
-export const auth = __wk('auth');
-export const adoptSession = __wk('adoptSession');
+const defaultUser = {
+  id: 'user_default',
+  email: 'writer@uspk.app',
+  displayName: 'Writer',
+};
+
+function getStoredUser() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error('Error reading auth user', e);
+  }
+  return defaultUser;
+}
+
+let currentUser = getStoredUser();
+const listeners = new Set();
+
+function notify() {
+  listeners.forEach((cb) => {
+    try {
+      cb(currentUser);
+    } catch (e) {
+      console.error('Auth listener error', e);
+    }
+  });
+}
+
+export const auth = {
+  getCurrentUser: () => currentUser,
+  onAuthChange: (cb) => {
+    listeners.add(cb);
+    // Initial call
+    cb(currentUser);
+    return () => listeners.delete(cb);
+  },
+  signIn: async () => {
+    currentUser = getStoredUser() || defaultUser;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentUser));
+    } catch (e) {}
+    notify();
+    return currentUser;
+  },
+  signOut: async () => {
+    currentUser = null;
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+    notify();
+    return true;
+  },
+  isAppOwner: () => true,
+};
+
+export const adoptSession = () => Promise.resolve(true);

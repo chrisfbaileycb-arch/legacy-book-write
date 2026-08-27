@@ -1,27 +1,11 @@
 /**
- * Whacka client SDK — _gate (stub)
- *
- * The implementation runs on the Whacka platform and is provided to your app at
- * runtime; it is intentionally NOT part of this export. This stub only keeps
- * your imports resolving and documents which Whacka APIs your code uses. Your
- * own code (components, pages, hooks) is the real, complete export. See README.
+ * Gate management helper.
  */
 
-const __wk = (path) =>
-  new Proxy(function () {}, {
-    get: (_t, prop) =>
-      typeof prop === 'symbol' || prop === 'then' ? undefined : __wk(path + '.' + prop),
-    apply: () => {
-      throw new Error(
-        '`' + path + '` runs on the Whacka platform and is not available in exported code.'
-      );
-    },
-  });
-
-export const clearGateToken = __wk('clearGateToken');
-export const gateSeedIsOpen = __wk('gateSeedIsOpen');
-export const setGateSeed = __wk('setGateSeed');
-export const handleGatedResponse = __wk('handleGatedResponse');
-export const popMagicKey = __wk('popMagicKey');
-export const fetchGateStatus = __wk('fetchGateStatus');
-export const submitGateCode = __wk('submitGateCode');
+export const clearGateToken = () => {};
+export const gateSeedIsOpen = () => true;
+export const setGateSeed = () => {};
+export const handleGatedResponse = () => {};
+export const popMagicKey = () => null;
+export const fetchGateStatus = async () => ({ gated: false });
+export const submitGateCode = async () => ({ ok: true });

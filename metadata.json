@@ -1,0 +1,6 @@
+{
+  "name": "EchoLegacy",
+  "description": "A prompt-a-day writing app that turns daily answers into a finished book.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
