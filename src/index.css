@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: 244 242 237;
+  --color-primary: 32 51 84;
+  --color-secondary: 184 106 66;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: rgb(28 36 52);
+}
+
+.font-display {
+  font-family: 'Fraunces', serif;
+}
+
+.font-read {
+  font-family: 'Newsreader', serif;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+/* subtle warm paper texture for large surfaces */
+.bg-paper {
+  background-color: rgb(244 242 237);
+  background-image:
+    radial-gradient(ellipse at 12% -10%, rgba(184,106,66,0.05), transparent 55%),
+    radial-gradient(ellipse at 100% 0%, rgba(32,51,84,0.05), transparent 45%);
+}
